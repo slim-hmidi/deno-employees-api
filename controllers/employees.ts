@@ -1,5 +1,5 @@
 // @ts-ignore
-import { HandlerFunc, Context } from "https://deno.land/x/abc/mod.ts";
+import { HandlerFunc, Context } from "https://deno.land/x/abc@v0.2.9/mod.ts";
 import db from '../config/db.ts';
 
 const database = db.getDatabase;

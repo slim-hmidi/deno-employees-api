@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Application } from "https://deno.land/x/abc/mod.ts";
+import { Application } from "https://deno.land/x/abc@v0.2.9/mod.ts";
 
 import {
   fetchAllEmployees,

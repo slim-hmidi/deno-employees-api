@@ -1,5 +1,5 @@
 // @ts-ignore
-import { init, MongoClient } from "https://deno.land/x/mongo@v0.5.2/mod.ts";
+import { init, MongoClient } from "https://raw.githubusercontent.com/slim-hmidi/deno_mongo/master/mod.ts";
 
 // Initialize the plugin
 await init()
