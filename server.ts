@@ -1,17 +1,13 @@
-// @ts-ignore
-import { Application } from "https://deno.land/x/abc@v0.2.9/mod.ts";
+import { Application } from "https://deno.land/x/abc@v1.0.0-rc2/mod.ts";
+import "https://deno.land/x/denv/mod.ts";
 
 import {
   fetchAllEmployees,
   createEmployee,
   fetchOneEmployee,
   updateEmployee,
-  deleteEmployee
-}
-  from "./controllers/employees.ts";
-
-
-
+  deleteEmployee,
+} from "./controllers/employees.ts";
 
 const app = new Application();
 

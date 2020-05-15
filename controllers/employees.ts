@@ -1,9 +1,11 @@
-// @ts-ignore
-import { HandlerFunc, Context } from "https://deno.land/x/abc@v0.2.9/mod.ts";
-import db from '../config/db.ts';
+import {
+  HandlerFunc,
+  Context,
+} from "https://deno.land/x/abc@v1.0.0-rc2/mod.ts";
+import db from "../config/db.ts";
 
 const database = db.getDatabase;
-const employees = database.collection('employees');
+const employees = database.collection("employees");
 
 interface Employee {
   _id: {
@@ -25,35 +27,32 @@ export const createEmployee: HandlerFunc = async (c: Context) => {
     const insertedEmployee = await employees.insertOne({
       name,
       age,
-      salary
+      salary,
     });
 
     return c.json(insertedEmployee, 201);
   } catch (error) {
     return c.json(error, 500);
   }
-}
+};
 
 export const fetchAllEmployees: HandlerFunc = async (c: Context) => {
   try {
-
     const fetchedEmployees: Employee[] = await employees.find();
 
     if (fetchedEmployees) {
-      const list = fetchedEmployees.length ? fetchedEmployees.map(employee => {
-        const { _id: { $oid }, name, age, salary } = employee;
-        return { id: $oid, name, age, salary };
-      })
-        :
-        [];
+      const list = fetchedEmployees.length
+        ? fetchedEmployees.map((employee) => {
+          const { _id: { $oid }, name, age, salary } = employee;
+          return { id: $oid, name, age, salary };
+        })
+        : [];
       return c.json(list, 200);
     }
-
   } catch (error) {
     return c.json(error, 500);
   }
-
-}
+};
 
 export const fetchOneEmployee: HandlerFunc = async (c: Context) => {
   try {
@@ -63,15 +62,14 @@ export const fetchOneEmployee: HandlerFunc = async (c: Context) => {
 
     if (fetchedEmployee) {
       const { _id: { $oid }, name, age, salary } = fetchedEmployee;
-      return c.json({ id: $oid, name, age, salary }, 200)
+      return c.json({ id: $oid, name, age, salary }, 200);
     }
 
-    return c.string('Employee not found', 404);
+    return c.string("Employee not found", 404);
   } catch (error) {
     return c.json(error, 500);
   }
-
-}
+};
 
 export const updateEmployee: HandlerFunc = async (c: Context) => {
   try {
@@ -81,29 +79,30 @@ export const updateEmployee: HandlerFunc = async (c: Context) => {
       name?: string;
       salary: string;
       age?: string;
-    }
+    };
 
     if (!Object.keys(body).length) {
       return c.string("Request body can not be empty!", 400);
     }
 
-
     const fetchedEmployee = await employees.findOne({ _id: { "$oid": id } });
 
     if (fetchedEmployee) {
-      const { matchedCount } = await employees.updateOne({ _id: { "$oid": id } }, { $set: body })
+      const { matchedCount } = await employees.updateOne(
+        { _id: { "$oid": id } },
+        { $set: body },
+      );
       if (matchedCount) {
-        return c.string('Employee updated successfully!', 204);
+        return c.string("Employee updated successfully!", 204);
       }
-      return c.string('Unable to update employee');
+      return c.string("Unable to update employee");
     }
 
-    return c.string('Employee not found', 404);
-
+    return c.string("Employee not found", 404);
   } catch (error) {
     return c.json(error, 500);
   }
-}
+};
 
 export const deleteEmployee: HandlerFunc = async (c: Context) => {
   try {
@@ -112,16 +111,15 @@ export const deleteEmployee: HandlerFunc = async (c: Context) => {
     const fetchedEmployee = await employees.findOne({ _id: { "$oid": id } });
 
     if (fetchedEmployee) {
-      const deleteCount = await employees.deleteOne({ _id: { "$oid": id } })
+      const deleteCount = await employees.deleteOne({ _id: { "$oid": id } });
       if (deleteCount) {
-        return c.string('Employee deleted successfully!', 204)
+        return c.string("Employee deleted successfully!", 204);
       }
-      return c.string('Unable to delete employee', 400);
+      return c.string("Unable to delete employee", 400);
     }
 
-    return c.string('Employee not found', 404);
-
+    return c.string("Employee not found", 404);
   } catch (error) {
     return c.json(error, 500);
   }
-}
+};

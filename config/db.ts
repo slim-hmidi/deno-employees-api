@@ -1,8 +1,7 @@
-// @ts-ignore
-import { init, MongoClient } from "https://raw.githubusercontent.com/slim-hmidi/deno_mongo/master/mod.ts";
+import { init, MongoClient } from "https://deno.land/x/mongo@v0.6.0/mod.ts";
 
-// Initialize the plugin
-await init()
+// @ts-ignore
+await init();
 
 class DB {
   public client: MongoClient;
@@ -20,8 +19,9 @@ class DB {
     return this.client.database(this.dbName);
   }
 }
-
-const db = new DB("deno_demo", "mongodb://localhost:27017");
+const dbName = Deno.env.get("DB_NAME") || "deno_demo";
+const dbHostUrl = Deno.env.get("DB_HOST_URL") || "mongodb://localhost:27017";
+const db = new DB(dbName, dbHostUrl);
 db.connect();
 
 export default db;
