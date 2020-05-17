@@ -7,7 +7,7 @@ import {
   updateEmployee,
   deleteEmployee,
 } from "./controllers/employees.ts";
-import { ErrorHandler, ErrorMiddleware } from "./utils/middlewares.ts";
+import { ErrorMiddleware } from "./utils/middlewares.ts";
 
 const app = new Application();
 
