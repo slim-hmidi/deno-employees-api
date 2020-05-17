@@ -18,6 +18,9 @@ interface Employee {
 
 export const createEmployee: HandlerFunc = async (c: Context) => {
   try {
+    if (c.request.headers.get("content-type") !== "application/json") {
+      throw Error("Invalid body");
+    }
     const body = await (c.body());
     if (!Object.keys(body).length) {
       return c.string("Request body can not be empty!", 400);
@@ -32,7 +35,7 @@ export const createEmployee: HandlerFunc = async (c: Context) => {
 
     return c.json(insertedEmployee, 201);
   } catch (error) {
-    return c.json(error, 500);
+    return c.json(error.message, 500);
   }
 };
 
@@ -50,7 +53,7 @@ export const fetchAllEmployees: HandlerFunc = async (c: Context) => {
       return c.json(list, 200);
     }
   } catch (error) {
-    return c.json(error, 500);
+    return c.json(error.message, 500);
   }
 };
 
@@ -67,13 +70,16 @@ export const fetchOneEmployee: HandlerFunc = async (c: Context) => {
 
     return c.string("Employee not found", 404);
   } catch (error) {
-    return c.json(error, 500);
+    return c.json(error.message, 500);
   }
 };
 
 export const updateEmployee: HandlerFunc = async (c: Context) => {
   try {
     const { id } = c.params as { id: string };
+    if (c.request.headers.get("content-type") !== "application/json") {
+      throw Error("Invalid body");
+    }
 
     const body = await (c.body()) as {
       name?: string;
@@ -100,7 +106,7 @@ export const updateEmployee: HandlerFunc = async (c: Context) => {
 
     return c.string("Employee not found", 404);
   } catch (error) {
-    return c.json(error, 500);
+    return c.json(error.message, 500);
   }
 };
 
@@ -120,6 +126,6 @@ export const deleteEmployee: HandlerFunc = async (c: Context) => {
 
     return c.string("Employee not found", 404);
   } catch (error) {
-    return c.json(error, 500);
+    return c.json(error.message, 500);
   }
 };
