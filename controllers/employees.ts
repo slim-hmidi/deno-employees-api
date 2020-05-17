@@ -3,6 +3,7 @@ import {
   Context,
 } from "https://deno.land/x/abc@v1.0.0-rc2/mod.ts";
 import db from "../config/db.ts";
+import { ErrorHandler } from "../utils/middlewares.ts";
 
 const database = db.getDatabase;
 const employees = database.collection("employees");
@@ -19,11 +20,11 @@ interface Employee {
 export const createEmployee: HandlerFunc = async (c: Context) => {
   try {
     if (c.request.headers.get("content-type") !== "application/json") {
-      throw Error("Invalid body");
+      throw new ErrorHandler("Invalid body", 422);
     }
     const body = await (c.body());
     if (!Object.keys(body).length) {
-      return c.string("Request body can not be empty!", 400);
+      throw new ErrorHandler("Request body can not be empty!", 400);
     }
     const { name, salary, age } = body;
 
@@ -35,7 +36,7 @@ export const createEmployee: HandlerFunc = async (c: Context) => {
 
     return c.json(insertedEmployee, 201);
   } catch (error) {
-    return c.json(error.message, 500);
+    throw new ErrorHandler(error.message, error.status || 500);
   }
 };
 
@@ -53,7 +54,7 @@ export const fetchAllEmployees: HandlerFunc = async (c: Context) => {
       return c.json(list, 200);
     }
   } catch (error) {
-    return c.json(error.message, 500);
+    throw new ErrorHandler(error.message, error.status || 500);
   }
 };
 
@@ -68,9 +69,9 @@ export const fetchOneEmployee: HandlerFunc = async (c: Context) => {
       return c.json({ id: $oid, name, age, salary }, 200);
     }
 
-    return c.string("Employee not found", 404);
+    throw new ErrorHandler("Employee not found", 404);
   } catch (error) {
-    return c.json(error.message, 500);
+    throw new ErrorHandler(error.message, error.status || 500);
   }
 };
 
@@ -78,7 +79,7 @@ export const updateEmployee: HandlerFunc = async (c: Context) => {
   try {
     const { id } = c.params as { id: string };
     if (c.request.headers.get("content-type") !== "application/json") {
-      throw Error("Invalid body");
+      throw new ErrorHandler("Invalid body", 422);
     }
 
     const body = await (c.body()) as {
@@ -88,7 +89,7 @@ export const updateEmployee: HandlerFunc = async (c: Context) => {
     };
 
     if (!Object.keys(body).length) {
-      return c.string("Request body can not be empty!", 400);
+      throw new ErrorHandler("Request body can not be empty!", 400);
     }
 
     const fetchedEmployee = await employees.findOne({ _id: { "$oid": id } });
@@ -103,10 +104,9 @@ export const updateEmployee: HandlerFunc = async (c: Context) => {
       }
       return c.string("Unable to update employee");
     }
-
-    return c.string("Employee not found", 404);
+    throw new ErrorHandler("Employee not found", 404);
   } catch (error) {
-    return c.json(error.message, 500);
+    throw new ErrorHandler(error.message, error.status || 500);
   }
 };
 
@@ -121,11 +121,11 @@ export const deleteEmployee: HandlerFunc = async (c: Context) => {
       if (deleteCount) {
         return c.string("Employee deleted successfully!", 204);
       }
-      return c.string("Unable to delete employee", 400);
+      throw new ErrorHandler("Unable to delete employee", 400);
     }
 
-    return c.string("Employee not found", 404);
+    throw new ErrorHandler("Employee not found", 404);
   } catch (error) {
-    return c.json(error.message, 500);
+    throw new ErrorHandler(error.message, error.status || 500);
   }
 };

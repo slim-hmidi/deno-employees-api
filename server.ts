@@ -1,6 +1,5 @@
 import { Application } from "https://deno.land/x/abc@v1.0.0-rc2/mod.ts";
 import "https://deno.land/x/denv/mod.ts";
-
 import {
   fetchAllEmployees,
   createEmployee,
@@ -8,8 +7,11 @@ import {
   updateEmployee,
   deleteEmployee,
 } from "./controllers/employees.ts";
+import { ErrorHandler, ErrorMiddleware } from "./utils/middlewares.ts";
 
 const app = new Application();
+
+app.use(ErrorMiddleware);
 
 app.get("/employees", fetchAllEmployees)
   .post("/employees", createEmployee)
