@@ -8,4 +8,4 @@ deno run --allow-write --allow-read --allow-plugin --allow-net --allow-env --uns
 ```
 
 ## PS:
-I use deno v1.0.0 to run the server, if you are using a new version of deno and the app does not work, feel free to open an issue on my repo or the repository of the used modules.
+I use deno v1.0.0 to run the server, if you are using a new version of deno and the app does not work, feel free to open an issue on my repository or the module's repository which generates the error.
