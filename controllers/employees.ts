@@ -1,7 +1,7 @@
 import {
   HandlerFunc,
   Context,
-} from "https://deno.land/x/abc@v1.0.0-rc2/mod.ts";
+} from "https://deno.land/x/abc@v1/mod.ts";
 import db from "../config/db.ts";
 import { ErrorHandler } from "../utils/middlewares.ts";
 
@@ -17,12 +17,18 @@ interface Employee {
   salary: number;
 }
 
+interface NewEmployee {
+  name: string;
+  age: number;
+  salary: number;
+}
+
 export const createEmployee: HandlerFunc = async (c: Context) => {
   try {
     if (c.request.headers.get("content-type") !== "application/json") {
       throw new ErrorHandler("Invalid body", 422);
     }
-    const body = await (c.body());
+    const body = await (c.body<NewEmployee>());
     if (!Object.keys(body).length) {
       throw new ErrorHandler("Request body can not be empty!", 400);
     }
@@ -42,7 +48,9 @@ export const createEmployee: HandlerFunc = async (c: Context) => {
 
 export const fetchAllEmployees: HandlerFunc = async (c: Context) => {
   try {
-    const fetchedEmployees: Employee[] = await employees.find();
+    const fetchedEmployees: Employee[] = await employees.find(
+      { name: { $ne: null } },
+    );
 
     if (fetchedEmployees) {
       const list = fetchedEmployees.length
